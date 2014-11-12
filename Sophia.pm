@@ -1,20 +1,39 @@
-perl-database-sophia
-====================
+package Database::Sophia;
 
-Perl XS for Sophia DB (http://sphia.org/)
+use utf8;
+use strict;
+use vars qw($AUTOLOAD $VERSION $ABSTRACT @ISA @EXPORT);
 
-# INSTALLATION
+BEGIN {
+	$VERSION = 0.8;
+	$ABSTRACT = "Sophia is a modern embeddable key-value database designed for a high load environment (XS for Sophia)";
+	
+	@ISA = qw(Exporter DynaLoader);
+	@EXPORT = qw(
+		SPDIR SPALLOC SPCMP SPPAGE SPGC SPGCF
+		SPGROW SPMERGE SPMERGEWM SPMERGEFORCE SPVERSION
+		SPO_RDONLY SPO_RDWR SPO_CREAT SPO_SYNC
+		SPGT SPGTE SPLT SPLTE
+	);
+};
 
-```sh
-perl Makefile.PL
-make
-make test
-make install
-```
+bootstrap Database::Sophia $VERSION;
 
-# SYNOPSIS
+use DynaLoader ();
+use Exporter ();
 
-```perl
+1;
+
+
+__END__
+
+=head1 NAME
+
+Database::Sophia - Sophia is a modern embeddable key-value database designed for a high load environment (XS for Sophia)
+
+=head1 SYNOPSIS
+
+ 
  use Database::Sophia;
  
  my $env = Database::Sophia->sp_env();
@@ -43,230 +62,218 @@ make install
  
  $db->sp_destroy();
  $env->sp_destroy();
-```
+ 
 
-# DESCRIPTION
+=head1 DESCRIPTION
+
+It has unique architecture that was created as a result of research and rethinking of primary algorithmic constraints, associated with a getting popular Log-file based data structures, such as LSM-tree.
 
 See http://sphia.org/
 
-# METHODS
 
-### sp_env
+=head1 METHODS
+
+=head2 sp_env
 
 create a new environment handle
 
-```perl
  my $env = Database::Sophia->sp_env();
-```
 
-### sp_ctl
+
+=head2 sp_ctl
 
 configurate a database
 
-##### SPDIR
+=head3 SPDIR
 
 Sets database directory path and it's open flags to use by sp_open().
 
-```perl
  $env->sp_ctl(SPDIR, SPO_CREAT|SPO_RDWR, "./db");
-```
 
-**Possible flags are:**
-* SPO_RDWR   - open repository in read-write mode (default)
-* SPO_RDONLY - open repository in read-only mode
-* SPO_CREAT  - create repository if it is not exists.
+=item Possible flags are:
 
-##### SPCMP
+SPO_RDWR   - open repository in read-write mode (default)
+
+SPO_RDONLY - open repository in read-only mode
+
+SPO_CREAT  - create repository if it is not exists.
+
+=back
+
+
+=head3 SPCMP
 
 Sets database comparator function to use by database for a key order determination.
 
-```perl
  my $sub_cmp = sub {
 	my ($key_a, $key_b, $arg) = @_;
  }
  
  $env->sp_ctl(SPCMP, $sub_cmp, "arg to callback");
-```
 
-##### SPPAGE
+
+=head3 SPPAGE
 
 Sets database max key count in a single page. This option can be tweaked for performance.
 
-```perl
  $env->sp_ctl(SPPAGE, 1024);
-```
 
-##### SPGC
+
+=head3 SPGC
 
 Sets flag that garbage collector should be turn on.
 
-```perl
  $env->sp_ctl(SPGC, 1);
-```
 
-##### SPGCF
+
+=head3 SPGCF
 
 Sets database garbage collector factor value, which is used to determine whether it is time to start gc.
 
-```perl
  $env->sp_ctl(SPGCF, 0.5);
-```
 
-##### SPGROW
+
+=head3 SPGROW
 
 Sets new database files initial new size and resize factor. This values are used while database extend during merge.
 
-```perl
  $env->sp_ctl(SPGROW, 16 * 1024 * 1024, 2.0);
-```
 
-##### SPMERGE
+
+=head3 SPMERGE
 
 Sets flag that merger thread must be created during sp_open().
 
-```perl
  $env->sp_ctl(SPMERGE, 1);
-```
 
-##### SPMERGEWM
+
+=head3 SPMERGEWM
 
 Sets database merge watermark value.
 
-```perl
  $env->sp_ctl(SPMERGEWM, 200000);
-```
 
-### sp_open
+
+=head2 sp_open
 
 Open or create a database
 
-```perl
  my $db = $env->sp_open();
-```
 
 On success, return database object; On error, it returns undef.
 
 
-### sp_error
+=head2 sp_error
 
 Get a string error description
 
-```perl
  $env->sp_error();
-```
 
-### sp_destroy
+
+=head2 sp_destroy
 
 Free any handle
 
-```perl
  $ptr->sp_destroy();
-```
 
-### sp_begin
+
+=head2 sp_begin
 
 Begin a transaction
 
-```perl
  $db->sp_begin();
-```
 
-### sp_commit
+
+=head2 sp_commit
 
 Apply a transaction
 
-```perl
  $db->sp_commit();
-```
 
-### sp_rollback
+
+=head2 sp_rollback
 
 Discard a transaction changes
 
-```perl
  $db->sp_rollback();
-```
 
-### sp_set
+
+=head2 sp_set
 
 Insert or replace a key-value pair
 
-```perl
  $db->sp_set("key", "value");
-```
 
-### sp_get
+
+=head2 sp_get
 
 Find a key in a database
 
-```perl
  my $error;
  $db->sp_get("key", $error);
-```
 
-### sp_delete
+
+=head2 sp_delete
 
 Delete key from a database
 
-```perl
  $db->sp_delete("key");
-```
 
-### sp_cursor
+
+=head2 sp_cursor
 
 create a database cursor
 
-```perl
  my $cur = $db->sp_cursor(SPGT, "key");
-```
 
-**Possible order are:**
-* SPGT  - increasing order (skipping the key, if it is equal)
-* SPGTE - increasing order (with key)
-* SPLT  - decreasing order (skippng the key, if is is equal)
-* SPLTE - decreasing order
+=item Possible order are:
+
+SPGT  - increasing order (skipping the key, if it is equal)
+
+SPGTE - increasing order (with key)
+
+SPLT  - decreasing order (skippng the key, if is is equal)
+
+SPLTE - decreasing order
+
+=back
 
 After a use, cursor handle should be freed by $cur->sp_destroy() function.
 
-### sp_fetch
+
+=head2 sp_fetch
 
 Iterate a cursor
 
-```perl
  $cur->sp_fetch();
-```
 
-### sp_key
+
+=head2 sp_key
 
 Get current key
 
-```perl
  $cur->sp_key()
-```
 
-### sp_keysize
 
-```perl
+=head2 sp_keysize
+
  $cur->sp_keysize()
-```
 
-### sp_value
 
-```perl
+=head2 sp_value
+
  $cur->sp_value()
-```
 
-### sp_valuesize
 
-```perl
+=head2 sp_valuesize
+
  $cur->sp_valuesize()
-```
 
-# Example
 
-### sp_open
+=head1 Example
 
-```perl
+=head2 sp_open
+
  use Database::Sophia;
  
  my $env = Database::Sophia->sp_env();
@@ -276,26 +283,22 @@ Get current key
  
  my $db = $env->sp_open();
  die $env->sp_error() unless $db;
-```
 
-### sp_error
+=head2 sp_error
 
-```perl
  my $db = $env->sp_open();
  die $env->sp_error() unless $db;
-```
 
-### sp_destroy
 
-```perl
+=head2 sp_destroy
+
  $db->sp_destroy();
  $cur->sp_destroy();
  $env->sp_destroy();
-```
 
-### sp_begin
 
-```perl
+=head2 sp_begin
+
  my $rc = $db->sp_begin();
  print $env->sp_error(), "\n" if $rc == -1;
  
@@ -304,16 +307,15 @@ Get current key
  
  $rc = $db->sp_commit();
  print $env->sp_error(), "\n" if $rc == -1;
-```
 
-### sp_commit
+
+=head2 sp_commit
 
 See sp_begin
 
 
-### sp_rollback
+=head2 sp_rollback
 
-```perl
  my $rc = $db->sp_begin();
  print $env->sp_error(), "\n" if $rc == -1;
  
@@ -322,18 +324,16 @@ See sp_begin
  
  $rc = $db->sp_rollback();
  print $env->sp_error(), "\n" if $rc == -1;
-```
 
-### sp_set
 
-```perl
+=head2 sp_set
+
  $rc = $db->sp_set("key", "value");
  print $env->sp_error(), "\n" if $rc == -1;
-```
 
-### sp_get
 
-```perl
+=head2 sp_get
+
  my $error;
  my $value = $db->sp_get("key", $error);
  
@@ -347,11 +347,10 @@ See sp_begin
  	print "Key found", "\n";
  	print "key: ", $value, "\n";
  }
-```
 
-### sp_fetch
 
-```perl
+=head2 sp_fetch
+
  my $cur = $db->sp_cursor(SPGT, "key");
  
  while($cur->sp_fetch()) {
@@ -360,45 +359,39 @@ See sp_begin
  }
  
  $cur->sp_destroy();
-```
-
-### sp_key
-
-See sp_fetch
 
 
-### sp_keysize
+=head2 sp_key
 
 See sp_fetch
 
 
-### sp_value
+=head2 sp_keysize
 
 See sp_fetch
 
 
-### sp_valuesize
+=head2 sp_value
 
 See sp_fetch
 
 
-# DESTROY
+=head2 sp_valuesize
 
-```perl
+See sp_fetch
+
+
+=head1 DESTROY
+
  undef $obj;
-```
 
 Free mem and destroy object.
 
-#CPAN
-
-http://search.cpan.org/~lastmac/
-
-# AUTHOR
+=head1 AUTHOR
 
 Alexander Borisov <lex.borisov@gmail.com>
 
-# COPYRIGHT AND LICENSE
+=head1 COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2014 by Alexander Borisov.
 
@@ -406,3 +399,6 @@ This is free software; you can redistribute it and/or modify it under the same t
 
 See libsophia license and COPYRIGHT
 http://sphia.org/
+
+
+=cut
