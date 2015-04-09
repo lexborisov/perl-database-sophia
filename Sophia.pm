@@ -5,7 +5,7 @@ use strict;
 use vars qw($AUTOLOAD $VERSION $ABSTRACT @ISA @EXPORT);
 
 BEGIN {
-	$VERSION = 0.8;
+	$VERSION = 0.9;
 	$ABSTRACT = "Sophia is a modern embeddable key-value database designed for a high load environment (XS for Sophia)";
 	
 	@ISA = qw(Exporter DynaLoader);
@@ -70,6 +70,7 @@ It has unique architecture that was created as a result of research and rethinki
 
 See http://sphia.org/
 
+This module uses Sophia v1.1. See http://sphia.org/v11.html
 
 =head1 METHODS
 

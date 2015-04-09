@@ -20,14 +20,14 @@ my $rc = eval
 if($rc)
 {
 	eval {
-		my $ff = File::Fetch->new(uri => "http://github.com/pmwkaa/sophia/archive/master.zip");
+		my $ff = File::Fetch->new(uri => "http://github.com/pmwkaa/sophia/archive/v1.1.zip");
 		
 		if(my $file = $ff->fetch())
 		{
 			my $ae = Archive::Extract->new( archive => $file );
 			if($ae->extract( to => '.' ))
 			{
-				$sophia     = $FindBin::Bin ."/sophia-master";
+				$sophia     = $FindBin::Bin ."/sophia-1.1";
 				$sophia_src = "$sophia/db";
 			}
 		}

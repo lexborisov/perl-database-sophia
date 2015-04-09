@@ -47,7 +47,11 @@ make install
 
 # DESCRIPTION
 
+It has unique architecture that was created as a result of research and rethinking of primary algorithmic constraints, associated with a getting popular Log-file based data structures, such as LSM-tree.
+
 See http://sphia.org/
+
+This module uses Sophia v1.1. See http://sphia.org/v11.html
 
 # METHODS
 
