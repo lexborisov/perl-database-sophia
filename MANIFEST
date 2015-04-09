@@ -7,6 +7,7 @@ Sophia.xs	        XS glue
 t/000_create.t          Base test file
 typemap			
 Sophia-src/COPYRIGHT    Sophia source
+Sophia-src/db
 Sophia-src/db/a.h
 Sophia-src/db/cat.c
 Sophia-src/db/cat.h
@@ -42,6 +43,14 @@ Sophia-src/db/task.h
 Sophia-src/db/track.h
 Sophia-src/db/util.c
 Sophia-src/db/util.h
+Sophia-src/debian/changelog
+Sophia-src/debian/compat
+Sophia-src/debian/control
+Sophia-src/debian/copyright
+Sophia-src/debian/postinst
+Sophia-src/debian/rules
+Sophia-src/debian/source
+Sophia-src/debian/source/format
 Sophia-src/makefile
 Sophia-src/README
 Sophia-src/sophia.gyp
